@@ -1,0 +1,38 @@
+import kagglehub
+import os
+import pandas as pd
+
+# Download the dataset
+path = kagglehub.dataset_download("waqi786/emoji-trends-dataset")
+print("Path to dataset files:", path)
+
+# Verify files in the dataset directory
+files = os.listdir(path)
+print("Files in the dataset directory:", files)
+
+# Load the dataset file
+dataset_file = os.path.join(path, 'emoji_usage_dataset.csv')
+if not os.path.exists(dataset_file):
+    raise FileNotFoundError(f"Dataset file '{dataset_file}' not found!")
+
+# Load the dataset
+df = pd.read_csv(dataset_file)
+print("Dataset loaded successfully!")
+
+# Inspect the dataset to identify emoji and sentiment columns
+print("Columns in the dataset:", df.columns)
+print(df.head())
+
+# Now, use 'Emoji' and 'Context' columns
+emoji_column_name = "Emoji"  # The emoji column
+sentiment_column_name = "Context"  # The sentiment column
+
+# Validate that the required columns exist in the dataset
+if emoji_column_name not in df.columns or sentiment_column_name not in df.columns:
+    raise ValueError(
+        f"Dataset must have '{emoji_column_name}' and '{sentiment_column_name}' columns."
+    )
+
+# Create a dictionary for emoji sentiment mapping
+emoji_sentiment_map = pd.Series(df[sentiment_column_name].values,
+                                index=df[emoji_column_name]).to_dict()
